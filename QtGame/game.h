@@ -13,14 +13,21 @@ public:
 
     // public methods
     void displayMainMenu();
+    QString getWhosTurn();
+    void setWhosTurn(QString player);
 
     // public attributes
     QGraphicsScene* scene;
     HexBoard* hexBoard;
-    QString whosTurn;
 
 public slots:
     void start();
+
+private:
+    void drawPanel(int x, int y, int width, int height, QColor color, double opacity);
+    void drawGUI();
+    QString whosTurn_;
+    QGraphicsTextItem* whosTurnText;
 };
 
 #endif // GAME_H

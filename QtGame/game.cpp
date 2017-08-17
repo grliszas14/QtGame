@@ -14,6 +14,8 @@ Game::Game(QWidget *parent) {
     scene->setSceneRect(0,0,1024,768);
     setScene(scene);
 
+    //initialize
+    whosTurn_ = QString("PLAYER1");
 }
 
 void Game::start() {
@@ -22,7 +24,45 @@ void Game::start() {
 
     // test code TODO remove
     hexBoard = new HexBoard();
-    hexBoard->placeHexes(100, 100, 7, 7);
+    hexBoard->placeHexes(200, 50, 7, 7);
+    drawGUI();
+
+}
+
+void Game::drawPanel(int x, int y, int width, int height, QColor color, double opacity) {
+    // draws a panel at the specified location with the specified properties
+    QGraphicsRectItem*  panel = new QGraphicsRectItem(x, y, width, height);
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(color);
+    panel->setBrush(brush);
+    panel->setOpacity(opacity);
+    scene->addItem(panel);
+
+}
+
+void Game::drawGUI() {
+    // draw the left panel
+    drawPanel(0, 0, 150, 768, Qt::darkCyan, 1);
+
+    // draw the right panel
+    drawPanel(874, 0, 150, 768, Qt::darkCyan, 1);
+
+    // place player 1 text
+    QGraphicsTextItem* p1 = new QGraphicsTextItem("Player 1's Cards: ");
+    p1->setPos(25, 0 );
+    scene->addItem(p1);
+
+    // place player 2 text
+    QGraphicsTextItem* p2 = new QGraphicsTextItem("Player 2's Cards: ");
+    p2->setPos(874 + 25, 0 );
+    scene->addItem(p2);
+
+    // place whosTurnText
+    whosTurnText = new QGraphicsTextItem();
+    setWhosTurn(QString("PLAYER1"));
+    whosTurnText->setPos(490,0);
+    scene->addItem(whosTurnText);
 
 }
 
@@ -51,4 +91,16 @@ void Game::displayMainMenu() {
     quitButton->setPos(qxPos, qyPos);
     connect(quitButton,SIGNAL(clicked()), this, SLOT(close()));
     scene->addItem(quitButton);
+}
+
+QString Game::getWhosTurn() {
+    return whosTurn_;
+}
+
+void Game::setWhosTurn(QString player) {
+    // change the QString
+    whosTurn_ = player;
+
+    // change the QGraphicsTextItem
+    whosTurnText->setPlainText(QString("Whos turn: ") + player);
 }
