@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <hexboard.h>
+#include <QMouseEvent>
 
 class Game: public QGraphicsView {
     Q_OBJECT
@@ -15,11 +16,19 @@ public:
     void displayMainMenu();
     QString getWhosTurn();
     void setWhosTurn(QString player);
+    void pickUpCard(Hex* card);
+    void placeCard(Hex* hexToReplace);
+    void nextPlayersTurn();
+    void removeFromDeck(Hex* card, QString player);
+
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 
     // public attributes
     QGraphicsScene* scene;
     HexBoard* hexBoard;
     Hex* cardToPlace;
+    QPointF originalPos;
 
 public slots:
     void start();

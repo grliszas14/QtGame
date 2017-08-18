@@ -1,5 +1,11 @@
 #include <hex.h>
+#include <QPointF>
+#include <QVector>
+#include <QPolygon>
 #include <QBrush>
+#include <game.h>
+
+extern Game* game;
 
 Hex::Hex(QGraphicsItem *parent) {
     // draw the polygon
@@ -19,10 +25,29 @@ Hex::Hex(QGraphicsItem *parent) {
 
     // draw the polygon
     setPolygon(hexagon);
+
+    // initialize
+    isPlaced = false;
+}
+
+bool Hex::getIsPlaced() {
+    return isPlaced;
 }
 
 QString Hex::getOwner() {
     return owner;
+}
+
+void Hex::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    // if this hex is NOT placed (so it is a card) then pick it up
+    if (getIsPlaced() == false) {
+        game->pickUpCard(this);
+    }
+
+    // if this hex IS placed, then replace it
+    else {
+        game->placeCard(this);
+    }
 }
 
 void Hex::setOwner(QString player) {
@@ -50,4 +75,8 @@ void Hex::setOwner(QString player) {
         brush.setColor(Qt::blue);
         setBrush(brush);
     }
+}
+
+void Hex::setIsPlaced(bool b) {
+    isPlaced = b;
 }

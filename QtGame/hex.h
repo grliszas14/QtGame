@@ -2,6 +2,7 @@
 #define HEX_H
 
 #include <QGraphicsPolygonItem>
+#include <QGraphicsSceneMouseEvent>
 
 class Hex: public QGraphicsPolygonItem {
 public:
@@ -12,6 +13,9 @@ public:
     int getAttackOf(int side);
     bool getIsPlaced();
     QString getOwner();
+
+    // events
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     // setters
     void setAttackOf(int side, int attack);

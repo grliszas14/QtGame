@@ -37,6 +37,7 @@ void HexBoard::createHexColumn(int x, int y, int numOfRows) {
 
         // set owner to NOONE initially
         hex->setOwner(QString("NOONE"));
+        hex->setIsPlaced(true);
     }
 
 
