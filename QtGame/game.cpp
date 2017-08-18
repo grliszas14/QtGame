@@ -16,6 +16,7 @@ Game::Game(QWidget *parent) {
 
     //initialize
     whosTurn_ = QString("PLAYER1");
+    cardToPlace = NULL;
 }
 
 void Game::start() {
@@ -24,8 +25,9 @@ void Game::start() {
 
     // test code TODO remove
     hexBoard = new HexBoard();
-    hexBoard->placeHexes(200, 50, 7, 7);
+    hexBoard->placeHexes(200, 30, 7, 7);
     drawGUI();
+    createInitialCards();
 
 }
 
@@ -64,6 +66,64 @@ void Game::drawGUI() {
     whosTurnText->setPos(490,0);
     scene->addItem(whosTurnText);
 
+}
+
+void Game::createNewCard(QString player) {
+    // create the card
+    Hex* card = new Hex();
+    card->setOwner(player);
+
+    // add the card to the proper list
+    if ( player == QString("PLAYER1")) {
+        player1Cards.append(card);
+    } else {
+        player2Cards.append(card);
+    }
+
+    // draw the cards
+    drawCards();
+}
+
+void Game::createInitialCards() {
+    // create player 1's cards
+    for (size_t i = 0, n = 5; i < n; i++) {
+        createNewCard(QString("PLAYER1"));
+    }
+
+    // create player 2's cards
+    for (size_t i = 0, n = 5; i < n; i++) {
+        createNewCard(QString("PLAYER2"));
+    }
+
+    drawCards();
+}
+
+void Game::drawCards() {
+    // traverse through list of cards and draw them
+
+    // remove all of player 1's cards from the scene
+    for (size_t i = 0, n = player1Cards.size(); i < n; i++) {
+        scene->removeItem(player1Cards[i]);
+    }
+
+    // remove all of player 2's cards from the scene
+    for (size_t i = 0, n = player2Cards.size(); i < n; i++) {
+        scene->removeItem(player2Cards[i]);
+    }
+
+    // draw player 1's cards
+    for (size_t i = 0, n = player1Cards.size(); i < n; i++) {
+        Hex* card = player1Cards[i];
+        card->setPos(13, 25 + 85 * i);
+        scene->addItem(card);
+    }
+
+    // draw player 2's cards
+    for (size_t i = 0, n = player2Cards.size(); i < n; i++) {
+        Hex* card = player2Cards[i];
+        card->setPos(874 + 13, 25 + 85 * i);
+        scene->addItem(card);
+    }
 }
 
 void Game::displayMainMenu() {

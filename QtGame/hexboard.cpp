@@ -34,5 +34,10 @@ void HexBoard::createHexColumn(int x, int y, int numOfRows) {
         hex->setPos(x, y+82*i);
         hexes.append(hex);
         game->scene->addItem(hex);
+
+        // set owner to NOONE initially
+        hex->setOwner(QString("NOONE"));
     }
+
+
 }

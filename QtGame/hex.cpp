@@ -1,4 +1,5 @@
 #include <hex.h>
+#include <QBrush>
 
 Hex::Hex(QGraphicsItem *parent) {
     // draw the polygon
@@ -18,4 +19,35 @@ Hex::Hex(QGraphicsItem *parent) {
 
     // draw the polygon
     setPolygon(hexagon);
+}
+
+QString Hex::getOwner() {
+    return owner;
+}
+
+void Hex::setOwner(QString player) {
+    // set the owner
+    owner = player;
+
+    // change the color
+    if ( player == QString("NOONE")) {
+        QBrush brush;
+        brush.setStyle(Qt::SolidPattern);
+        brush.setColor(Qt::lightGray);
+        setBrush(brush);
+    }
+
+    if ( player == QString("PLAYER1")) {
+        QBrush brush;
+        brush.setStyle(Qt::SolidPattern);
+        brush.setColor(Qt::red);
+        setBrush(brush);
+    }
+
+    if ( player == QString("PLAYER2")) {
+        QBrush brush;
+        brush.setStyle(Qt::SolidPattern);
+        brush.setColor(Qt::blue);
+        setBrush(brush);
+    }
 }

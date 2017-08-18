@@ -10,11 +10,16 @@ public:
 
     // getters
     int getAttackOf(int side);
+    bool getIsPlaced();
+    QString getOwner();
 
     // setters
     void setAttackOf(int side, int attack);
+    void setOwner(QString player);
+    void setIsPlaced(bool b);
 
 private:
+    bool isPlaced;
     QString owner;
     int side0Attack;
     int side1Attack;
