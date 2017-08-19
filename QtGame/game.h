@@ -20,6 +20,8 @@ public:
     void placeCard(Hex* hexToReplace);
     void nextPlayersTurn();
     void removeFromDeck(Hex* card, QString player);
+    void gameOver();
+    void displayGameOverWindow(QString textToDisplay);
 
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -29,9 +31,11 @@ public:
     HexBoard* hexBoard;
     Hex* cardToPlace;
     QPointF originalPos;
+    int numCardsPlaced;
 
 public slots:
     void start();
+    void restartGame();
 
 private:
     // private methods

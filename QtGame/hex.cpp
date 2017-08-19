@@ -29,6 +29,9 @@ Hex::Hex(QGraphicsItem *parent) {
     // initialize
     isPlaced = false;
 
+    // create lines
+    createLines();
+
     // initialize side attacks to zero
     side0Attack = 0;
     side1Attack = 0;
@@ -62,6 +65,27 @@ Hex::Hex(QGraphicsItem *parent) {
     // make all attack texts invisible
     for (size_t i = 0, n = attackTexts.size(); i < n; i++) {
         attackTexts[i]->setVisible(false);
+    }
+}
+
+int Hex::getAttackOf(int side) {
+    if (side == 0) {
+        return side0Attack;
+    }
+    else if (side == 1) {
+        return side1Attack;
+    }
+    else if (side == 2) {
+        return side2Attack;
+    }
+    else if (side == 3) {
+        return side3Attack;
+    }
+    else if (side == 4) {
+        return side4Attack;
+    }
+    else if (side ==5) {
+        return side5Attack;
     }
 }
 
@@ -151,5 +175,95 @@ void Hex::displaySideAttacks() {
     // traverse through all the side_attack texts and make them visible
     for (size_t i = 0, n = attackTexts.size(); i < n; i++) {
         attackTexts[i]->setVisible(true);
+    }
+}
+
+void Hex::createLines() {
+    QPointF hexCenter(x()+60,y()+40);
+    QPointF finalPt(hexCenter.x(), hexCenter.y()-65);
+    QLineF ln(hexCenter,finalPt);
+
+    for (size_t i = 0, n = 6; i < n; ++i) {
+        QLineF lnCopy(ln);
+        lnCopy.setAngle(90+60*i);
+        QGraphicsLineItem* line = new QGraphicsLineItem(lnCopy, this);
+        lines.append(line);
+        line->setVisible(false);
+    }
+}
+
+void Hex::findNeighbours() {
+    for (size_t i = 0, n = lines.size(); i < n; i++) {
+        // if the line collides with an item of type Hex, add it to neighbours
+        QList<QGraphicsItem*> cItems = lines[i]->collidingItems();
+        for (size_t j = 0; j < cItems.size(); j++) {
+            Hex* item = dynamic_cast<Hex*>(cItems[j]);
+            if(cItems[j] != this && item) {
+                neighbours.append(item);
+            }
+        }
+    }
+}
+
+void Hex::switchOwner() {
+    // if the owner is player1, make it player2 and vice versa
+    if (getOwner() == QString("PLAYER1")) {
+        setOwner(QString("PLAYER2"));
+    }
+    else if (getOwner() == QString("PLAYER2")) {
+        setOwner((QString("PLAYER1")));
+    }
+
+}
+
+void Hex::captureNeighbours() {
+    // traverses through neighbours, captures weaker neighbours
+    for (size_t i = 0, n = neighbours.size(); i < n; i ++) {
+        bool isEnemy = false;
+        bool isNotNeutral = false;
+        if (this->getOwner() != neighbours[i]->getOwner()) {
+            isEnemy = true;
+        }
+
+        if (neighbours[i]->getOwner() != QString("NOONE")) {
+            isNotNeutral = true;
+        }
+
+        // it is an enemy and not neutral
+        if ( isEnemy && isNotNeutral) {
+            // find attack of touching sides
+            int thisAttack = 0;
+            int neighboursAttack = 0;
+
+            if ( i == 0) {
+                thisAttack = getAttackOf(0);
+                neighboursAttack = neighbours[0]->getAttackOf(3);
+            }
+            else if ( i == 1) {
+                thisAttack = getAttackOf(1);
+                neighboursAttack = neighbours[1]->getAttackOf(4);
+            }
+            else if ( i == 2) {
+                thisAttack = getAttackOf(2);
+                neighboursAttack = neighbours[2]->getAttackOf(5);
+            }
+            else if ( i == 3) {
+                thisAttack = getAttackOf(3);
+                neighboursAttack = neighbours[3]->getAttackOf(0);
+            }
+            else if ( i == 4) {
+                thisAttack = getAttackOf(4);
+                neighboursAttack = neighbours[4]->getAttackOf(1);
+            }
+            else if ( i == 5) {
+                thisAttack = getAttackOf(5);
+                neighboursAttack = neighbours[5]->getAttackOf(2);
+            }
+
+            // if this has greater attack, switch neighbours owner
+            if (thisAttack > neighboursAttack) {
+                neighbours[i]->switchOwner();
+            }
+        }
     }
 }

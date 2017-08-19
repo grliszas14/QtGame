@@ -23,8 +23,14 @@ public:
     void setIsPlaced(bool b);
 
     void displaySideAttacks();
+    void createLines();
+    void findNeighbours();
+    void switchOwner();
+    void captureNeighbours();
 
 private:
+    QList<QGraphicsLineItem*> lines;
+    QList<Hex*> neighbours;
     bool isPlaced;
     QString owner;
     int side0Attack;

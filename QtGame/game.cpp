@@ -19,9 +19,14 @@ Game::Game(QWidget *parent){
 
     // initialize
     cardToPlace = NULL;
+    numCardsPlaced = 0;
 }
 
 void Game::start(){
+    // initialize
+    cardToPlace = NULL;
+    numCardsPlaced = 0;
+
     // clear the screen
     scene->clear();
 
@@ -30,6 +35,15 @@ void Game::start(){
     hexBoard->placeHexes(200,30,7,7);
     drawGUI();
     createInitialCards();
+}
+
+void Game::restartGame() {
+    // clear everything and then call start()
+    player1Cards.clear();
+    player2Cards.clear();
+    hexBoard->getHexes().clear();
+    scene->clear();
+    start();
 }
 
 void Game::drawPanel(int x, int y, int width, int height, QColor color, double opacity){
@@ -193,6 +207,12 @@ void Game::placeCard(Hex *hexToReplace){
     scene->removeItem(hexToReplace);
     cardToPlace->setIsPlaced(true);
     removeFromDeck(cardToPlace,getWhosTurn());
+
+    // find neighbours
+    cardToPlace->findNeighbours();
+    cardToPlace->captureNeighbours();
+
+    // make card to place null
     cardToPlace = NULL;
 
     // replace the placed card w a new one
@@ -200,6 +220,12 @@ void Game::placeCard(Hex *hexToReplace){
 
     // make it the next players turn
     nextPlayersTurn();
+
+    numCardsPlaced++;
+
+    if (numCardsPlaced >= hexBoard->getHexes().size()) {
+        gameOver();
+    }
 }
 
 void Game::nextPlayersTurn(){
@@ -222,6 +248,63 @@ void Game::removeFromDeck(Hex *card, QString player){
         player2Cards.removeAll(card);
     }
 
+}
+
+void Game::gameOver() {
+    // count hexes, determine who has more, set message
+    int p1hexes = 0;
+    int p2hexes = 0;
+    for (size_t i = 0, n = hexBoard->getHexes().size(); i < n; i++) {
+        if (hexBoard->getHexes()[i]->getOwner() == QString("PLAYER1")) {
+            p1hexes++;
+        }
+        else if (hexBoard->getHexes()[i]->getOwner() == QString("PLAYER2")) {
+            p2hexes++;
+        }
+    }
+
+    QString message;
+    if (p1hexes > p2hexes) {
+        message = "Player 1 has won!";
+    }
+    else if (p2hexes > p1hexes) {
+        message = "Player 2 has won!";
+    }
+    else if (p2hexes == p1hexes){
+        message = "Tie game!";
+    }
+
+    displayGameOverWindow(message);
+}
+
+void Game::displayGameOverWindow(QString textToDisplay) {
+    // disable all scene items
+    for (size_t i = 0, n = scene->items().size(); i < n; i++) {
+        scene->items()[i]->setEnabled(false);
+    }
+
+    // popup semi-transparent panel
+    drawPanel(0,0,1024,768,Qt::black,0.65);
+
+    // draw panel
+    drawPanel(312, 184, 400, 400, Qt::lightGray, 0.75);
+
+    // create playAgain button
+    Button* playAgain = new Button(QString("Play Again"));
+    playAgain->setPos(410, 300);
+    scene->addItem(playAgain);
+    connect(playAgain, SIGNAL(clicked()), this, SLOT(restartGame()));
+
+    // create quit button
+    Button* quit = new Button(QString("Quit"));
+    quit->setPos(410, 375);
+    scene->addItem(quit);
+    connect(quit, SIGNAL(clicked()), this, SLOT(close()));
+
+    // create text announcing winner
+    QGraphicsTextItem* overText = new QGraphicsTextItem(textToDisplay);
+    overText->setPos(460, 250);
+    scene->addItem(overText);
 }
 
 void Game::mouseMoveEvent(QMouseEvent *event){
