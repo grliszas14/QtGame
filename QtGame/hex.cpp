@@ -28,6 +28,41 @@ Hex::Hex(QGraphicsItem *parent) {
 
     // initialize
     isPlaced = false;
+
+    // initialize side attacks to zero
+    side0Attack = 0;
+    side1Attack = 0;
+    side2Attack = 0;
+    side3Attack = 0;
+    side4Attack = 0;
+    side5Attack = 0;
+
+    // create QGraphicsTextItems to represend visually each side's attack
+    QGraphicsTextItem* text0 = new QGraphicsTextItem(QString::number(0), this);
+    QGraphicsTextItem* text1 = new QGraphicsTextItem(QString::number(0), this);
+    QGraphicsTextItem* text2 = new QGraphicsTextItem(QString::number(0), this);
+    QGraphicsTextItem* text3 = new QGraphicsTextItem(QString::number(0), this);
+    QGraphicsTextItem* text4 = new QGraphicsTextItem(QString::number(0), this);
+    QGraphicsTextItem* text5 = new QGraphicsTextItem(QString::number(0), this);
+
+    attackTexts.append(text0);
+    attackTexts.append(text1);
+    attackTexts.append(text2);
+    attackTexts.append(text3);
+    attackTexts.append(text4);
+    attackTexts.append(text5);
+
+    text0->setPos(50, 0);
+    text1->setPos(20, 15);
+    text2->setPos(20, 40);
+    text3->setPos(50, 55);
+    text4->setPos(80, 40);
+    text5->setPos(80, 15);
+
+    // make all attack texts invisible
+    for (size_t i = 0, n = attackTexts.size(); i < n; i++) {
+        attackTexts[i]->setVisible(false);
+    }
 }
 
 bool Hex::getIsPlaced() {
@@ -47,6 +82,37 @@ void Hex::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     // if this hex IS placed, then replace it
     else {
         game->placeCard(this);
+    }
+}
+
+void Hex::setAttackOf(int side, int attack) {
+    switch (side) {
+    case 0:
+        side0Attack = attack;
+        attackTexts[0]->setPlainText(QString::number(attack));
+        break;
+    case 1:
+        side1Attack = attack;
+        attackTexts[1]->setPlainText(QString::number(attack));
+        break;
+    case 2:
+        side2Attack = attack;
+        attackTexts[2]->setPlainText(QString::number(attack));
+        break;
+    case 3:
+        side3Attack = attack;
+        attackTexts[3]->setPlainText(QString::number(attack));
+        break;
+    case 4:
+        side4Attack = attack;
+        attackTexts[4]->setPlainText(QString::number(attack));
+        break;
+    case 5:
+        side5Attack = attack;
+        attackTexts[5]->setPlainText(QString::number(attack));
+        break;
+    default:
+        break;
     }
 }
 
@@ -79,4 +145,11 @@ void Hex::setOwner(QString player) {
 
 void Hex::setIsPlaced(bool b) {
     isPlaced = b;
+}
+
+void Hex::displaySideAttacks() {
+    // traverse through all the side_attack texts and make them visible
+    for (size_t i = 0, n = attackTexts.size(); i < n; i++) {
+        attackTexts[i]->setVisible(true);
+    }
 }

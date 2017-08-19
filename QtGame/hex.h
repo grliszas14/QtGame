@@ -22,6 +22,8 @@ public:
     void setOwner(QString player);
     void setIsPlaced(bool b);
 
+    void displaySideAttacks();
+
 private:
     bool isPlaced;
     QString owner;
@@ -31,6 +33,7 @@ private:
     int side3Attack;
     int side4Attack;
     int side5Attack;
+    QList<QGraphicsTextItem*> attackTexts;
 };
 
 #endif // HEX_H

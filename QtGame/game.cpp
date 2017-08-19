@@ -2,6 +2,8 @@
 #include "hexboard.h"
 #include "button.h"
 #include <QGraphicsTextItem>
+#include <stdlib.h> // srand() and rand()
+#include <time.h> // time()
 
 #include <QDebug>
 Game::Game(QWidget *parent){
@@ -71,6 +73,16 @@ void Game::createNewCard(QString player){
     Hex* card = new Hex();
     card->setOwner(player);
     card->setIsPlaced(false);
+
+    // randomize side attacks of card
+    for (size_t i = 0, n = 6; i < n; i++) {
+        // generate a random number
+        int randNum = rand() % 6 + 1; // value from 1 to 6
+        card->setAttackOf(i, randNum);
+    }
+
+    // make side attacks visible
+    card->displaySideAttacks();
 
     // add the card to the proper list
     if (player == QString("PLAYER1")){
